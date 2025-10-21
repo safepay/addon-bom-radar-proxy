@@ -20,14 +20,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-```
-
-### .dockerignore
-```
-node_modules
-npm-debug.log
-.git
-.gitignore
-README.md
-cache
-*.md
