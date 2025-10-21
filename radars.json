@@ -1,0 +1,798 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [130.925, -12.457]
+      },
+      "properties": {
+        "id": "IDR633",
+        "name": "Darwin (Berrimah)",
+        "state": "NT",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.82, -12.27]
+      },
+      "properties": {
+        "id": "IDR1123",
+        "name": "Gove",
+        "state": "NT",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [132.378, -14.521]
+      },
+      "properties": {
+        "id": "IDR423",
+        "name": "Katherine (Tindal)",
+        "state": "NT",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.66, -18.229]
+      },
+      "properties": {
+        "id": "IDR393",
+        "name": "Halls Creek",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [122.235, -17.951]
+      },
+      "properties": {
+        "id": "IDR173",
+        "name": "Broome",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [118.631, -20.372]
+      },
+      "properties": {
+        "id": "IDR163",
+        "name": "Port Hedland",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [116.8467, -20.7375]
+      },
+      "properties": {
+        "id": "IDR1113",
+        "name": "Karratha",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.671, -24.888]
+      },
+      "properties": {
+        "id": "IDR1143",
+        "name": "Carnarvon",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [114.614444, -28.778333]
+      },
+      "properties": {
+        "id": "IDR063",
+        "name": "Geraldton",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [115.867, -32.393]
+      },
+      "properties": {
+        "id": "IDR703",
+        "name": "Perth (Serpentine)",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [117.816361, -34.941806]
+      },
+      "properties": {
+        "id": "IDR313",
+        "name": "Albany",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.891111, -33.859444]
+      },
+      "properties": {
+        "id": "IDR323",
+        "name": "Esperance",
+        "state": "WA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.818, -31.144]
+      },
+      "properties": {
+        "id": "IDR273",
+        "name": "Woomera",
+        "state": "SA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [138.469, -34.617]
+      },
+      "properties": {
+        "id": "IDR643",
+        "name": "Adelaide (Buckland Park)",
+        "state": "SA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [140.774, -37.747]
+      },
+      "properties": {
+        "id": "IDR143",
+        "name": "Mt Gambier",
+        "state": "SA",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [141.598194, -34.287111]
+      },
+      "properties": {
+        "id": "IDR973",
+        "name": "Mildura",
+        "state": "VIC",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [142.013306, -35.997556]
+      },
+      "properties": {
+        "id": "IDR953",
+        "name": "Rainbow",
+        "state": "VIC",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.755417, -37.855222]
+      },
+      "properties": {
+        "id": "IDR023",
+        "name": "Melbourne",
+        "state": "VIC",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [147.567, -37.885]
+      },
+      "properties": {
+        "id": "IDR683",
+        "name": "Bairnsdale",
+        "state": "VIC",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [147.502, -42.832]
+      },
+      "properties": {
+        "id": "IDR763",
+        "name": "Hobart",
+        "state": "TAS",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [147.457, -35.165]
+      },
+      "properties": {
+        "id": "IDR553",
+        "name": "Wagga Wagga",
+        "state": "NSW",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.52861, -33.552194]
+      },
+      "properties": {
+        "id": "IDR943",
+        "name": "Hillston",
+        "state": "NSW",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [148.708083, -32.744472]
+      },
+      "properties": {
+        "id": "IDR963",
+        "name": "Yeoval",
+        "state": "NSW",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [151.209417, -33.70083]
+      },
+      "properties": {
+        "id": "IDR713",
+        "name": "Sydney (Terrey Hills)",
+        "state": "NSW",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [151.385, -32.852]
+      },
+      "properties": {
+        "id": "IDR043",
+        "name": "Newcastle",
+        "state": "NSW",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [152.982, -29.623]
+      },
+      "properties": {
+        "id": "IDR283",
+        "name": "Grafton",
+        "state": "NSW",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [153.116389, -27.501667]
+      },
+      "properties": {
+        "id": "IDR663",
+        "name": "Brisbane (Mt Stapylton)",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [152.595556, -27.658056]
+      },
+      "properties": {
+        "id": "IDR503",
+        "name": "Marburg",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [151.95, -27.56]
+      },
+      "properties": {
+        "id": "IDR1083",
+        "name": "Toowoomba",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [152.667, -26.183]
+      },
+      "properties": {
+        "id": "IDR083",
+        "name": "Gympie",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [151.263, -23.847]
+      },
+      "properties": {
+        "id": "IDR233",
+        "name": "Gladstone",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [148.164, -23.534]
+      },
+      "properties": {
+        "id": "IDR723",
+        "name": "Emerald",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [143.143, -20.702]
+      },
+      "properties": {
+        "id": "IDR1073",
+        "name": "Richmond",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [146.77, -19.406]
+      },
+      "properties": {
+        "id": "IDR1063",
+        "name": "Townsville",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.018056, -19.252222]
+      },
+      "properties": {
+        "id": "IDR743",
+        "name": "Greenvale",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.755, -16.885]
+      },
+      "properties": {
+        "id": "IDR193",
+        "name": "Cairns",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [149.972, -16.289]
+      },
+      "properties": {
+        "id": "IDR413",
+        "name": "Willis Island",
+        "state": "QLD",
+        "type": "High-resolution Doppler"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [114.097, -22.235]
+      },
+      "properties": {
+        "id": "IDR293",
+        "name": "Learmonth",
+        "state": "WA",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [128.304, -25.034]
+      },
+      "properties": {
+        "id": "IDR443",
+        "name": "Giles",
+        "state": "WA",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.454, -30.789]
+      },
+      "properties": {
+        "id": "IDR483",
+        "name": "Kalgoorlie",
+        "state": "WA",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [133.71, -32.13]
+      },
+      "properties": {
+        "id": "IDR333",
+        "name": "Ceduna",
+        "state": "SA",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [147.457, -35.165]
+      },
+      "properties": {
+        "id": "IDR553",
+        "name": "Wagga Wagga (NEXRAD)",
+        "state": "NSW",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [149.191, -35.3075]
+      },
+      "properties": {
+        "id": "IDR403",
+        "name": "Canberra",
+        "state": "ACT",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [149.281, -36.509]
+      },
+      "properties": {
+        "id": "IDR032",
+        "name": "Nimmitabel",
+        "state": "NSW",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [150.78, -34.198]
+      },
+      "properties": {
+        "id": "IDR033",
+        "name": "Wollongong (Appin)",
+        "state": "NSW",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [167.939, -29.034]
+      },
+      "properties": {
+        "id": "IDR623",
+        "name": "Norfolk Island",
+        "state": "External",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [136.82, -12.27]
+      },
+      "properties": {
+        "id": "IDR1123",
+        "name": "Gove (Gulkula)",
+        "state": "NT",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [133.889, -23.795]
+      },
+      "properties": {
+        "id": "IDR253",
+        "name": "Alice Springs",
+        "state": "NT",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [134.588, -30.698]
+      },
+      "properties": {
+        "id": "IDR382",
+        "name": "Tarcoola",
+        "state": "SA",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [138.481, -35.283]
+      },
+      "properties": {
+        "id": "IDR463",
+        "name": "Sellicks Hill",
+        "state": "SA",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.903, -41.054]
+      },
+      "properties": {
+        "id": "IDR523",
+        "name": "NW Tasmania",
+        "state": "TAS",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [150.874, -34.495]
+      },
+      "properties": {
+        "id": "IDR712",
+        "name": "Warrawong",
+        "state": "NSW",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [153.118, -30.322]
+      },
+      "properties": {
+        "id": "IDR032",
+        "name": "Coffs Harbour",
+        "state": "NSW",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [149.845, -29.478]
+      },
+      "properties": {
+        "id": "IDR533",
+        "name": "Moree",
+        "state": "NSW",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.283, -23.433]
+      },
+      "properties": {
+        "id": "IDR563",
+        "name": "Longreach",
+        "state": "QLD",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [148.17, -23.58]
+      },
+      "properties": {
+        "id": "IDR723",
+        "name": "Emerald (Old)",
+        "state": "QLD",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [134.184, -19.635]
+      },
+      "properties": {
+        "id": "IDR642",
+        "name": "Tennant Creek",
+        "state": "NT",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.2, -20.85]
+      },
+      "properties": {
+        "id": "IDR202",
+        "name": "Hughenden",
+        "state": "QLD",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [148.25, -20.012]
+      },
+      "properties": {
+        "id": "IDR243",
+        "name": "Bowen",
+        "state": "QLD",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.75, -16.85]
+      },
+      "properties": {
+        "id": "IDR193",
+        "name": "Cairns (Smithfield)",
+        "state": "QLD",
+        "type": "Standard Weather Watch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [167.939, -29.034]
+      },
+      "properties": {
+        "id": "IDR623",
+        "name": "Norfolk Is.",
+        "state": "External",
+        "type": "Standard Weather Watch"
+      }
+    }
+  ]
+}
