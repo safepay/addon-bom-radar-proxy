@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  bom-radar-proxy:
+    build: .
+    container_name: bom-radar-proxy
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - LOG_LEVEL=info
+      - CACHE_DIR=/app/cache
+    volumes:
+      - ./cache:/app/cache
+      - ./radars.json:/app/radars.json:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+```
+
+### .dockerignore
+```
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+cache
+*.md
