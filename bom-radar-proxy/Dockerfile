@@ -10,9 +10,6 @@ RUN \
         nodejs \
         npm
 
-# Upgrade npm to latest
-RUN npm install -g npm@latest
-
 # Create app directory
 WORKDIR /app
 
