@@ -1,0 +1,41 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+*.pyc
+__pycache__/
+*.so
+*.dylib
+*.dll
+*.exe
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+bom-radar-proxy/src/cache/
+*.log
+
+# Secrets
+secrets.yaml
+*.key
+*.pem
+
+# Test files
+test/
+*.test.js
+
+# Distribution
+dist/
+build/
