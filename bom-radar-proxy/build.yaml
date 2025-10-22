@@ -9,5 +9,3 @@ labels:
   org.opencontainers.image.description: "Bureau of Meteorology radar image proxy with caching"
   org.opencontainers.image.source: "https://github.com/safepay/leaflet-bom-radar"
   org.opencontainers.image.licenses: "MIT"
-args:
-  TEMPIO_VERSION: "2021.09.0"
