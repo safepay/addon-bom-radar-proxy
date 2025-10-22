@@ -23,7 +23,7 @@ jobs:
         id: info
         uses: home-assistant/actions/helpers/info@master
         with:
-          path: "./bom-radar-proxy"
+          path: "./addon-bom-radar-proxy"
 
       - name: Check if add-on should be built
         id: check
