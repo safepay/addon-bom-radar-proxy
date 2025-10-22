@@ -34,4 +34,4 @@ schema:
   cache_ttl_hours: int(1,168)
   timestamp_refresh_interval: int(300,3600)
   max_cache_size_mb: int(100,10000)
-image: "ghcr.io/{arch}-addon-bom-radar-proxy"
+# image: "ghcr.io/{arch}-addon-bom-radar-proxy"
