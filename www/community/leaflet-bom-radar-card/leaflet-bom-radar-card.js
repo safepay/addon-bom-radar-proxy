@@ -392,4 +392,742 @@ class LeafletBomRadarCard extends HTMLElement {
         background: var(--primary-color);
         cursor: pointer;
         border: none;
-        box-
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .timeline-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4px;
+        font-size: 10px;
+        color: var(--secondary-text-color);
+      }
+      .zoom-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .zoom-controls label {
+        font-weight: 500;
+      }
+      .status-bar {
+        padding: 12px 16px;
+        background: var(--secondary-background-color);
+        border-top: 1px solid var(--divider-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: var(--secondary-text-color);
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      #timestamp-display {
+        font-weight: 500;
+        color: var(--primary-text-color);
+      }
+      .error-message {
+        padding: 16px;
+        background: var(--error-color, #f44336);
+        color: white;
+        text-align: center;
+      }
+      .leaflet-container {
+        background: #a0d6f5 !important;
+        font-family: inherit;
+      }
+      .leaflet-fade-anim .leaflet-popup {
+        transition: opacity ${this.config.fade_duration}ms;
+      }
+      .leaflet-zoom-anim .leaflet-zoom-animated {
+        transition: transform 0.25s cubic-bezier(0,0,0.25,1);
+      }
+      
+      /* Responsive design */
+      @media (max-width: 600px) {
+        .card-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        #map-container {
+          height: 400px;
+        }
+        .playback-controls {
+          justify-content: space-between;
+        }
+        .control-btn {
+          flex: 1;
+          min-width: auto;
+        }
+        .zoom-controls {
+          justify-content: space-between;
+        }
+        .radar-legend {
+          font-size: 10px;
+          padding: 8px;
+          bottom: 30px;
+          right: 5px;
+        }
+        .legend-color {
+          width: 20px;
+          height: 12px;
+        }
+      }
+    `;
+  }
+
+  async setupMap() {
+    await this.loadLeaflet();
+    
+    // Get home location from Home Assistant
+    const latitude = this._hass.config.latitude || -37.8136; // Default Melbourne
+    const longitude = this._hass.config.longitude || 144.9631;
+    
+    this.map = L.map(this.querySelector('#radar-map'), {
+      zoomControl: false,
+      attributionControl: true,
+      fadeAnimation: true,
+      zoomAnimation: true,
+      markerZoomAnimation: true
+    }).setView([latitude, longitude], this.config.default_zoom);
+    
+    // Add zoom control to top right
+    L.control.zoom({
+      position: 'topright'
+    }).addTo(this.map);
+    
+    // Add attribution
+    this.map.attributionControl.setPrefix('Leaflet');
+    
+    // Add base layer
+    this.addBaseLayer();
+    
+    // Add home marker
+    this.addHomeMarker(latitude, longitude);
+    
+    // Setup event listeners
+    this.setupEventListeners();
+    
+    // Monitor map viewport changes
+    this.map.on('moveend zoomend', () => {
+      this.onViewportChange();
+    });
+  }
+
+  async loadLeaflet() {
+    if (window.L) return;
+    
+    return new Promise((resolve, reject) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+      link.crossOrigin = '';
+      document.head.appendChild(link);
+      
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+      script.crossOrigin = '';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  addBaseLayer() {
+    if (this.config.base_layer === 'google') {
+      L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        attribution: '© Google Maps',
+        maxZoom: 20
+      }).addTo(this.map);
+    } else {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(this.map);
+    }
+  }
+
+  addHomeMarker(lat, lon) {
+    const homeIcon = L.divIcon({
+      html: '<div style="font-size: 24px;">🏠</div>',
+      className: 'home-marker',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15]
+    });
+    
+    L.marker([lat, lon], { icon: homeIcon })
+      .addTo(this.map)
+      .bindPopup('<b>Home</b>');
+  }
+
+  setupEventListeners() {
+    // Play button
+    this.querySelector('#play-btn').addEventListener('click', () => this.play());
+    
+    // Pause button
+    this.querySelector('#pause-btn').addEventListener('click', () => this.pause());
+    
+    // Previous button
+    this.querySelector('#prev-btn').addEventListener('click', () => this.previousFrame());
+    
+    // Next button
+    this.querySelector('#next-btn').addEventListener('click', () => this.nextFrame());
+    
+    // Refresh button
+    this.querySelector('#refresh-btn').addEventListener('click', () => this.refreshRadarData());
+    
+    // Timeline slider
+    this.querySelector('#timeline-slider').addEventListener('input', (e) => {
+      this.goToFrame(parseInt(e.target.value));
+    });
+    
+    // Zoom controls
+    this.querySelector('#zoom-in').addEventListener('click', () => {
+      this.map.zoomIn();
+    });
+    
+    this.querySelector('#zoom-out').addEventListener('click', () => {
+      this.map.zoomOut();
+    });
+    
+    this.querySelector('#zoom-home').addEventListener('click', () => {
+      const homeLat = this._hass.config.latitude || -37.8136;
+      const homeLon = this._hass.config.longitude || 144.9631;
+      this.map.setView([homeLat, homeLon], this.config.default_zoom);
+    });
+  }
+
+  async initializeViewport() {
+    this.showLoading(true);
+    this.updateStatusDisplay('Detecting visible radars...');
+    
+    try {
+      await this.updateVisibleRadars();
+      
+      if (this.visibleRadars.size === 0) {
+        this.updateStatusDisplay('No radars in view. Pan or zoom out to see radar coverage.');
+        this.showLoading(false);
+        return;
+      }
+      
+      await this.loadTimestampsForVisibleRadars();
+      await this.buildTimelineFromAllRadars();
+      
+      if (this.allTimestamps.length > 0) {
+        this.currentFrameIndex = this.allTimestamps.length - 1; // Start with most recent
+        await this.displayCurrentFrame();
+        this.updateTimeline();
+        this.updateTimelineLabels();
+      }
+      
+      this.updateRadarInfo();
+      this.showLoading(false);
+    } catch (error) {
+      console.error('Failed to initialize viewport:', error);
+      this.showError('Failed to load radar data: ' + error.message);
+      this.showLoading(false);
+    }
+  }
+
+  onViewportChange() {
+    // Debounce viewport changes to avoid excessive updates
+    clearTimeout(this.updateViewportDebounce);
+    this.updateViewportDebounce = setTimeout(() => {
+      this.updateVisibleRadarsAndDisplay();
+    }, 300);
+  }
+
+  async updateVisibleRadarsAndDisplay() {
+    const previousRadars = new Set(this.visibleRadars);
+    await this.updateVisibleRadars();
+    
+    // Check if visible radars changed
+    const radarsChanged = !this.setsEqual(previousRadars, this.visibleRadars);
+    
+    if (radarsChanged) {
+      console.log(`Visible radars changed. Now showing: ${Array.from(this.visibleRadars).join(', ')}`);
+      
+      // Load timestamps for new radars
+      await this.loadTimestampsForVisibleRadars();
+      
+      // Rebuild timeline
+      await this.buildTimelineFromAllRadars();
+      
+      // Update display
+      if (this.allTimestamps.length > 0) {
+        // Try to maintain similar timestamp position
+        this.currentFrameIndex = Math.min(this.currentFrameIndex, this.allTimestamps.length - 1);
+        await this.displayCurrentFrame();
+        this.updateTimeline();
+        this.updateTimelineLabels();
+      }
+      
+      this.updateRadarInfo();
+      
+      // Remove overlays for radars no longer visible
+      this.cleanupHiddenRadars();
+    }
+  }
+
+  async updateVisibleRadars() {
+    const bounds = this.map.getBounds();
+    const center = this.map.getCenter();
+    
+    this.visibleRadars.clear();
+    
+    // Find all radars within viewport or within max distance
+    for (const [id, radar] of Object.entries(this.radarLocations)) {
+      const radarLatLng = L.latLng(radar.lat, radar.lon);
+      
+      // Check if radar is within bounds or within max distance from center
+      const distanceKm = center.distanceTo(radarLatLng) / 1000;
+      
+      if (bounds.contains(radarLatLng) || distanceKm <= this.config.max_radar_distance_km) {
+        // Additionally check if radar coverage would be visible in viewport
+        if (this.isRadarCoverageVisible(radar, bounds)) {
+          this.visibleRadars.add(id);
+        }
+      }
+    }
+    
+    console.log(`Found ${this.visibleRadars.size} visible radars:`, Array.from(this.visibleRadars));
+  }
+
+  isRadarCoverageVisible(radar, bounds) {
+    // Check if any part of the radar's coverage area intersects with viewport
+    // Radar coverage is approximately 512km radius (max range)
+    const maxRadiusKm = 512;
+    const radarLatLng = L.latLng(radar.lat, radar.lon);
+    
+    // Calculate approximate bounds of radar coverage
+    const latDelta = maxRadiusKm / 111.32;
+    const lonDelta = maxRadiusKm / (111.32 * Math.cos(radar.lat * Math.PI / 180));
+    
+    const radarBounds = L.latLngBounds(
+      [radar.lat - latDelta, radar.lon - lonDelta],
+      [radar.lat + latDelta, radar.lon + lonDelta]
+    );
+    
+    // Check if radar bounds intersect with viewport bounds
+    return bounds.intersects(radarBounds);
+  }
+
+  async loadTimestampsForVisibleRadars() {
+    const fetchPromises = [];
+    
+    for (const radarId of this.visibleRadars) {
+      // Check if we need to fetch timestamps
+      const lastFetch = this.lastTimestampFetch.get(radarId) || 0;
+      const timeSinceLastFetch = Date.now() - lastFetch;
+      
+      if (timeSinceLastFetch >= this.MIN_FETCH_INTERVAL || !this.radarTimestamps.has(radarId)) {
+        fetchPromises.push(this.fetchTimestampsForRadar(radarId));
+      }
+    }
+    
+    if (fetchPromises.length > 0) {
+      this.updateStatusDisplay(`Loading timestamps for ${fetchPromises.length} radar(s)...`);
+      await Promise.allSettled(fetchPromises);
+    }
+  }
+
+  async fetchTimestampsForRadar(radarId) {
+    try {
+      const limit = Math.ceil((this.config.cache_hours * 60) / 10);
+      const response = await this.apiRequest(`/api/timestamps/${radarId}?limit=${limit}`);
+      const data = await response.json();
+      
+      this.radarTimestamps.set(radarId, data.timestamps || []);
+      this.lastTimestampFetch.set(radarId, Date.now());
+      
+      console.log(`Fetched ${data.timestamps.length} timestamps for ${radarId}`);
+    } catch (error) {
+      console.error(`Failed to fetch timestamps for ${radarId}:`, error);
+      this.radarTimestamps.set(radarId, []);
+    }
+  }
+
+  async buildTimelineFromAllRadars() {
+    // Collect all unique timestamps from all visible radars
+    const timestampSet = new Set();
+    
+    for (const radarId of this.visibleRadars) {
+      const timestamps = this.radarTimestamps.get(radarId) || [];
+      timestamps.forEach(ts => timestampSet.add(ts));
+    }
+    
+    // Sort timestamps chronologically (oldest to newest)
+    this.allTimestamps = Array.from(timestampSet).sort();
+    
+    console.log(`Built timeline with ${this.allTimestamps.length} unique timestamps`);
+  }
+
+  async displayCurrentFrame() {
+    if (this.allTimestamps.length === 0) return;
+    
+    const currentTimestamp = this.allTimestamps[this.currentFrameIndex];
+    
+    // Display all visible radars for this timestamp
+    const displayPromises = [];
+    
+    for (const radarId of this.visibleRadars) {
+      const timestamps = this.radarTimestamps.get(radarId) || [];
+      
+      // Find closest available timestamp for this radar
+      const closestTimestamp = this.findClosestTimestamp(timestamps, currentTimestamp);
+      
+      if (closestTimestamp) {
+        displayPromises.push(this.displayRadarImage(radarId, closestTimestamp));
+      }
+    }
+    
+    await Promise.allSettled(displayPromises);
+    
+    this.updateTimestampDisplay(currentTimestamp);
+  }
+
+  findClosestTimestamp(timestamps, targetTimestamp) {
+    if (timestamps.length === 0) return null;
+    
+    // Find the timestamp closest to (but not later than) the target
+    let closest = null;
+    let minDiff = Infinity;
+    
+    for (const ts of timestamps) {
+      if (ts <= targetTimestamp) {
+        const diff = parseInt(targetTimestamp) - parseInt(ts);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closest = ts;
+        }
+      }
+    }
+    
+    // If no timestamp before target, use earliest available
+    return closest || timestamps[0];
+  }
+
+  async displayRadarImage(radarId, timestamp) {
+    const cacheKey = `${radarId}_${timestamp}`;
+    const overlayId = `${radarId}_overlay`;
+    
+    // Get or cache image URL
+    if (!this.imageCache.has(cacheKey)) {
+      const imageUrl = `${this.ingressUrl}/api/radar/${radarId}/${timestamp}`;
+      this.imageCache.set(cacheKey, imageUrl);
+    }
+    
+    const imageUrl = this.imageCache.get(cacheKey);
+    const radar = this.radarLocations[radarId];
+    
+    // Calculate bounds for this radar
+    const bounds = this.calculateRadarBounds(radar);
+    
+    // Remove old overlay for this radar if exists
+    if (this.activeOverlays.has(overlayId)) {
+      const oldOverlay = this.activeOverlays.get(overlayId);
+      
+      // Fade out old overlay
+      if (oldOverlay._image) {
+        oldOverlay._image.style.transition = `opacity ${this.config.fade_duration}ms`;
+        oldOverlay._image.style.opacity = '0';
+        
+        setTimeout(() => {
+          this.map.removeLayer(oldOverlay);
+        }, this.config.fade_duration);
+      } else {
+        this.map.removeLayer(oldOverlay);
+      }
+    }
+    
+    // Create new overlay
+    const overlay = L.imageOverlay(imageUrl, bounds, {
+      opacity: 0, // Start invisible for fade-in
+      interactive: false,
+      crossOrigin: 'anonymous',
+      className: `radar-overlay radar-${radarId}`
+    });
+    
+    overlay.addTo(this.map);
+    this.activeOverlays.set(overlayId, overlay);
+    
+    // Fade in new overlay
+    overlay.on('load', () => {
+      if (overlay._image) {
+        overlay._image.style.transition = `opacity ${this.config.fade_duration}ms`;
+        setTimeout(() => {
+          overlay.setOpacity(this.config.opacity);
+        }, 10);
+      }
+    });
+  }
+
+  calculateRadarBounds(radar) {
+    const zoom = this.map.getZoom();
+    
+    // Determine radius based on zoom level
+    let radiusKm;
+    if (zoom >= 11) {
+      radiusKm = 64;
+    } else if (zoom >= 9) {
+      radiusKm = 128;
+    } else if (zoom >= 7) {
+      radiusKm = 256;
+    } else {
+      radiusKm = 512;
+    }
+    
+    // Convert radius to lat/lon degrees
+    const latDelta = radiusKm / 111.32;
+    const lonDelta = radiusKm / (111.32 * Math.cos(radar.lat * Math.PI / 180));
+    
+    return [
+      [radar.lat - latDelta, radar.lon - lonDelta],
+      [radar.lat + latDelta, radar.lon + lonDelta]
+    ];
+  }
+
+  cleanupHiddenRadars() {
+    // Remove overlays for radars no longer visible
+    for (const [overlayId, overlay] of this.activeOverlays.entries()) {
+      const radarId = overlayId.replace('_overlay', '');
+      
+      if (!this.visibleRadars.has(radarId)) {
+        // Fade out and remove
+        if (overlay._image) {
+          overlay._image.style.transition = `opacity ${this.config.fade_duration}ms`;
+          overlay._image.style.opacity = '0';
+          
+          setTimeout(() => {
+            this.map.removeLayer(overlay);
+            this.activeOverlays.delete(overlayId);
+          }, this.config.fade_duration);
+        } else {
+          this.map.removeLayer(overlay);
+          this.activeOverlays.delete(overlayId);
+        }
+      }
+    }
+  }
+
+  updateRadarInfo() {
+    const radarInfo = this.querySelector('#radar-info');
+    if (radarInfo) {
+      const count = this.visibleRadars.size;
+      const radarNames = Array.from(this.visibleRadars)
+        .map(id => this.radarLocations[id].name)
+        .join(', ');
+      
+      radarInfo.textContent = count > 0 
+        ? `Showing ${count} radar${count > 1 ? 's' : ''}: ${radarNames}`
+        : 'No radars in view';
+    }
+  }
+
+  updateTimestampDisplay(timestamp) {
+    const year = timestamp.substring(0, 4);
+    const month = timestamp.substring(4, 6);
+    const day = timestamp.substring(6, 8);
+    const hour = timestamp.substring(8, 10);
+    const minute = timestamp.substring(10, 12);
+    
+    const date = new Date(year, month - 1, day, hour, minute);
+    
+    const formatted = date.toLocaleString('en-AU', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+    
+    const now = new Date();
+    const ageMinutes = Math.round((now - date) / 60000);
+    const ageText = ageMinutes < 60 
+      ? `${ageMinutes}min ago` 
+      : `${Math.round(ageMinutes / 60)}hr ago`;
+    
+    this.querySelector('#timestamp-display').textContent = `${formatted} (${ageText})`;
+  }
+
+  updateStatusDisplay(message) {
+    this.querySelector('#timestamp-display').textContent = message;
+  }
+
+  updateTimeline() {
+    const slider = this.querySelector('#timeline-slider');
+    slider.max = Math.max(0, this.allTimestamps.length - 1);
+    slider.value = this.currentFrameIndex;
+  }
+
+  updateTimelineLabels() {
+    if (this.allTimestamps.length === 0) return;
+    
+    const labelsContainer = this.querySelector('#timeline-labels');
+    const first = this.allTimestamps[0]; // Oldest
+    const last = this.allTimestamps[this.allTimestamps.length - 1]; // Newest
+    
+    const formatTime = (ts) => {
+      const hour = ts.substring(8, 10);
+      const minute = ts.substring(10, 12);
+      return `${hour}:${minute}`;
+    };
+    
+    labelsContainer.innerHTML = `
+      <span>${formatTime(first)}</span>
+      <span>${formatTime(last)}</span>
+    `;
+  }
+
+  async refreshRadarData() {
+    const refreshBtn = this.querySelector('#refresh-btn');
+    refreshBtn.disabled = true;
+    refreshBtn.textContent = '⏳';
+    
+    this.showLoading(true);
+    
+    try {
+      // Force refresh timestamps for all visible radars
+      const fetchPromises = [];
+      for (const radarId of this.visibleRadars) {
+        fetchPromises.push(this.fetchTimestampsForRadar(radarId));
+      }
+      
+      await Promise.allSettled(fetchPromises);
+      
+      // Rebuild timeline
+      await this.buildTimelineFromAllRadars();
+      
+      if (this.allTimestamps.length > 0) {
+        // Go to most recent frame
+        this.currentFrameIndex = this.allTimestamps.length - 1;
+        await this.displayCurrentFrame();
+        this.updateTimeline();
+        this.updateTimelineLabels();
+      }
+      
+      this.updateStatusDisplay('Radar data refreshed');
+    } catch (error) {
+      console.error('Failed to refresh:', error);
+      this.showError('Failed to refresh: ' + error.message);
+    } finally {
+      this.showLoading(false);
+      refreshBtn.disabled = false;
+      refreshBtn.textContent = '🔄';
+    }
+  }
+
+  play() {
+    if (this.isPlaying || this.allTimestamps.length === 0) return;
+    
+    this.isPlaying = true;
+    this.querySelector('#play-btn').style.display = 'none';
+    this.querySelector('#pause-btn').style.display = 'inline-block';
+    
+    this.playbackInterval = setInterval(() => {
+      this.nextFrame();
+    }, this.config.playback_speed);
+  }
+
+  pause() {
+    this.isPlaying = false;
+    this.querySelector('#play-btn').style.display = 'inline-block';
+    this.querySelector('#pause-btn').style.display = 'none';
+    
+    if (this.playbackInterval) {
+      clearInterval(this.playbackInterval);
+      this.playbackInterval = null;
+    }
+  }
+
+  async nextFrame() {
+    if (this.allTimestamps.length === 0) return;
+    
+    this.currentFrameIndex = (this.currentFrameIndex + 1) % this.allTimestamps.length;
+    await this.displayCurrentFrame();
+    this.updateTimeline();
+  }
+
+  async previousFrame() {
+    if (this.allTimestamps.length === 0) return;
+    
+    this.currentFrameIndex = (this.currentFrameIndex - 1 + this.allTimestamps.length) % this.allTimestamps.length;
+    await this.displayCurrentFrame();
+    this.updateTimeline();
+  }
+
+  async goToFrame(index) {
+    if (index < 0 || index >= this.allTimestamps.length) return;
+    
+    this.currentFrameIndex = index;
+    await this.displayCurrentFrame();
+  }
+
+  showLoading(show) {
+    const overlay = this.querySelector('#loading-overlay');
+    if (overlay) {
+      overlay.style.display = show ? 'flex' : 'none';
+    }
+  }
+
+  showError(message) {
+    const errorEl = this.querySelector('#error-message');
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+      
+      setTimeout(() => {
+        errorEl.style.display = 'none';
+      }, 5000);
+    }
+  }
+
+  setsEqual(set1, set2) {
+    if (set1.size !== set2.size) return false;
+    for (const item of set1) {
+      if (!set2.has(item)) return false;
+    }
+    return true;
+  }
+
+  getCardSize() {
+    return 6;
+  }
+
+  static getConfigElement() {
+    return document.createElement("leaflet-bom-radar-card-editor");
+  }
+
+  static getStubConfig() {
+    return {
+      cache_hours: 2,
+      playback_speed: 500,
+      default_zoom: 8,
+      opacity: 0.7,
+      base_layer: "osm",
+      show_legend: true,
+      fade_duration: 300,
+      max_radar_distance_km: 800
+    };
+  }
+}
+
+customElements.define('leaflet-bom-radar-card', LeafletBomRadarCard);
+
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: 'leaflet-bom-radar-card',
+  name: 'Leaflet BoM Radar Card',
+  description: 'Dynamic multi-radar display with viewport-based loading',
+  preview: false,
+  documentationURL: 'https://github.com/safepay/leaflet-bom-radar',
+});
+
+console.info(
+  '%c LEAFLET-BOM-RADAR-CARD %c Version 2.0.0 ',
+  'color: orange; font-weight: bold; background: black',
+  'color: white; font-weight: bold; background: dimgray'
+);
