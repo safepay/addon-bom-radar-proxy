@@ -1,0 +1,13 @@
+configuration:
+  log_level:
+    name: Log Level
+    description: Set the logging verbosity
+  cache_ttl_hours:
+    name: Cache TTL (hours)
+    description: How long to keep cached images before deletion
+  timestamp_refresh_interval:
+    name: Timestamp Refresh Interval (seconds)
+    description: Minimum time between timestamp list refreshes
+  max_cache_size_mb:
+    name: Max Cache Size (MB)
+    description: Maximum disk space for cached radar images
