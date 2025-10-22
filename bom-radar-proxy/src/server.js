@@ -570,6 +570,270 @@ app.get('/api/closest-radar', async (req, res) => {
 });
 
 /**
+ * GET / 
+ * Root endpoint - Simple dashboard
+ */
+app.get('/', async (req, res) => {
+  try {
+    const files = await fs.readdir(CACHE_DIR);
+    let totalSize = 0;
+    let imageCount = 0;
+    
+    for (const file of files) {
+      if (file.endsWith('.png')) {
+        const stats = await fs.stat(path.join(CACHE_DIR, file));
+        totalSize += stats.size;
+        imageCount++;
+      }
+    }
+    
+    const totalSizeMB = Math.round(totalSize / 1024 / 1024 * 100) / 100;
+    const utilization = Math.round((totalSizeMB / MAX_CACHE_SIZE_MB) * 100);
+    
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BoM Radar Proxy</title>
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+          }
+          .container {
+            max-width: 900px;
+            margin: 0 auto;
+          }
+          .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          }
+          h1 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 28px;
+          }
+          .subtitle {
+            color: #666;
+            margin-bottom: 24px;
+            font-size: 14px;
+          }
+          .status {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+          }
+          .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+          }
+          .stat {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+          }
+          .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+          }
+          .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+          }
+          .stat-unit {
+            font-size: 14px;
+            color: #666;
+            margin-left: 4px;
+          }
+          .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 8px;
+          }
+          .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+          }
+          .api-list {
+            list-style: none;
+          }
+          .api-item {
+            background: #f9fafb;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            border-left: 3px solid #667eea;
+          }
+          .method {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+          }
+          .endpoint {
+            color: #333;
+          }
+          .footer {
+            text-align: center;
+            color: white;
+            margin-top: 24px;
+            font-size: 13px;
+          }
+          .footer a {
+            color: white;
+            text-decoration: underline;
+          }
+          @media (max-width: 600px) {
+            .stats-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="card">
+            <h1>📡 BoM Radar Proxy</h1>
+            <div class="subtitle">Bureau of Meteorology Radar Image Proxy & Cache</div>
+            <div class="status">● RUNNING</div>
+            
+            <div class="stats-grid">
+              <div class="stat">
+                <div class="stat-label">Cached Images</div>
+                <div class="stat-value">${imageCount}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Cache Size</div>
+                <div class="stat-value">${totalSizeMB}<span class="stat-unit">MB</span></div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Max Cache</div>
+                <div class="stat-value">${MAX_CACHE_SIZE_MB}<span class="stat-unit">MB</span></div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value">${Math.floor(process.uptime() / 3600)}<span class="stat-unit">hrs</span></div>
+              </div>
+            </div>
+            
+            <div class="stat-label">Cache Utilization</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${utilization}%">${utilization}%</div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h2 style="margin-bottom: 16px; font-size: 20px;">API Endpoints</h2>
+            <ul class="api-list">
+              <li class="api-item">
+                <span class="method">GET</span>
+                <span class="endpoint">/api/radars</span>
+              </li>
+              <li class="api-item">
+                <span class="method">GET</span>
+                <span class="endpoint">/api/closest-radar?lat={lat}&lon={lon}</span>
+              </li>
+              <li class="api-item">
+                <span class="method">GET</span>
+                <span class="endpoint">/api/timestamps/{radarId}</span>
+              </li>
+              <li class="api-item">
+                <span class="method">GET</span>
+                <span class="endpoint">/api/radar/{radarId}/{timestamp}</span>
+              </li>
+              <li class="api-item">
+                <span class="method">GET</span>
+                <span class="endpoint">/api/cache/stats</span>
+              </li>
+              <li class="api-item">
+                <span class="method">GET</span>
+                <span class="endpoint">/health</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="card">
+            <h2 style="margin-bottom: 16px; font-size: 20px;">Configuration</h2>
+            <div class="stats-grid">
+              <div class="stat">
+                <div class="stat-label">Timestamp Refresh</div>
+                <div class="stat-value">${TIMESTAMP_REFRESH_INTERVAL / 1000}<span class="stat-unit">sec</span></div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Image Refresh</div>
+                <div class="stat-value">${CURRENT_IMAGE_REFRESH_INTERVAL / 1000}<span class="stat-unit">sec</span></div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Cache TTL</div>
+                <div class="stat-value">${DISK_CACHE_TTL / 3600}<span class="stat-unit">hrs</span></div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">FTP Source</div>
+                <div class="stat-value" style="font-size: 12px;">ftp.bom.gov.au</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="footer">
+            <p>Add the <strong>Leaflet BoM Radar Card</strong> to your Home Assistant dashboard to view radar imagery.</p>
+            <p style="margin-top: 8px;">
+              <a href="https://github.com/safepay/leaflet-bom-radar" target="_blank">Documentation</a> • 
+              <a href="/health">Health Check</a> • 
+              <a href="/api/cache/stats">Cache Stats (JSON)</a>
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+  } catch (error) {
+    logger.error('Error rendering dashboard:', error);
+    res.status(500).send('Error loading dashboard');
+  }
+});
+
+/**
  * GET /health
  */
 app.get('/health', (req, res) => {
