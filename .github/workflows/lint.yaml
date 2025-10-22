@@ -15,4 +15,4 @@ jobs:
       - name: Run Home Assistant Add-on Lint
         uses: frenck/action-addon-linter@v2
         with:
-          path: "./bom-radar-proxy"
+          path: "./addon-bom-radar-proxy"
