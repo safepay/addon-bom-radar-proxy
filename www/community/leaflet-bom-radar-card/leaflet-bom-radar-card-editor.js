@@ -127,4 +127,111 @@ class LeafletBomRadarCardEditor extends HTMLElement {
         
         <div class="option">
           <label for="base_layer">Base Map Layer</label>
-          <select id="base_layer" @change="${this._
+          <select id="base_layer" @change="${this._valueChanged}">
+            <option value="osm" ${this._config.base_layer === 'osm' ? 'selected' : ''}>
+              OpenStreetMap
+            </option>
+            <option value="google" ${this._config.base_layer === 'google' ? 'selected' : ''}>
+              Google Maps
+            </option>
+          </select>
+        </div>
+        
+        <div class="section-header">Animation Settings</div>
+        
+        <div class="option">
+          <label for="playback_speed">Playback Speed (ms)</label>
+          <input
+            type="number"
+            id="playback_speed"
+            min="100"
+            max="2000"
+            step="100"
+            .value="${this._config.playback_speed || 500}"
+            @change="${this._valueChanged}"
+          />
+        </div>
+        <div class="help-text">
+          Milliseconds between frames (lower = faster animation)
+        </div>
+        
+        <div class="option">
+          <label for="fade_duration">Fade Duration (ms)</label>
+          <input
+            type="number"
+            id="fade_duration"
+            min="0"
+            max="1000"
+            step="50"
+            .value="${this._config.fade_duration || 300}"
+            @change="${this._valueChanged}"
+          />
+        </div>
+        <div class="help-text">
+          Transition time when switching radar images (0 = instant)
+        </div>
+        
+        <div class="section-header">Radar Coverage</div>
+        
+        <div class="option">
+          <label for="max_radar_distance_km">Max Radar Distance (km)</label>
+          <input
+            type="number"
+            id="max_radar_distance_km"
+            min="200"
+            max="1500"
+            step="100"
+            .value="${this._config.max_radar_distance_km || 800}"
+            @change="${this._valueChanged}"
+          />
+        </div>
+        <div class="help-text">
+          Maximum distance from viewport center to load radars
+        </div>
+        
+        <div class="section-header">Visual Options</div>
+        
+        <div class="option">
+          <label for="show_legend">Show Rainfall Legend</label>
+          <input
+            type="checkbox"
+            id="show_legend"
+            .checked="${this._config.show_legend !== false}"
+            @change="${this._valueChanged}"
+          />
+        </div>
+      </div>
+    `;
+  }
+
+  _valueChanged(ev) {
+    if (!this._config || !this._hass) {
+      return;
+    }
+
+    const target = ev.target;
+    const configValue = target.id;
+    let value;
+
+    if (target.type === 'checkbox') {
+      value = target.checked;
+    } else if (target.type === 'number') {
+      value = parseFloat(target.value);
+    } else {
+      value = target.value;
+    }
+
+    if (this._config[configValue] === value) {
+      return;
+    }
+
+    const newConfig = {
+      ...this._config,
+      [configValue]: value
+    };
+
+    this.configChanged(newConfig);
+  }
+}
+
+customElements.define("leaflet-bom-radar-card-editor", LeafletBomRadarCardEditor);
