@@ -13,11 +13,11 @@ RUN \
 # Create app directory
 WORKDIR /app
 
-# Copy package files first (for better layer caching)
-COPY src/package.json src/package-lock.json* ./
+# Copy package files
+COPY src/package.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # Copy application files
 COPY src/server.js ./
