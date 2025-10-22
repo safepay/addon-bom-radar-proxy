@@ -1,14 +1,17 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:15.0.1
+ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Install Node.js using the base image's package manager
+# Install Node.js and npm
 RUN \
     apk add --no-cache \
         nodejs \
         npm
+
+# Upgrade npm to latest
+RUN npm install -g npm@latest
 
 # Create app directory
 WORKDIR /app
@@ -23,8 +26,8 @@ RUN npm ci --only=production
 COPY src/server.js ./
 COPY src/radars.json ./
 
-# Create cache directory
-RUN mkdir -p /data/cache
+# Create cache directory with correct permissions
+RUN mkdir -p /data/cache && chmod 755 /data/cache
 
 # Copy root filesystem
 COPY rootfs /
@@ -34,10 +37,6 @@ RUN chmod a+x /etc/services.d/bom-proxy/run
 
 # Expose port
 EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
 # Build arguments
 ARG BUILD_DATE
