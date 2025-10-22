@@ -1,4 +1,5 @@
 // leaflet-bom-radar-card-editor.js
+// Version 2.0.0
 
 class LeafletBomRadarCardEditor extends HTMLElement {
   setConfig(config) {
@@ -38,7 +39,6 @@ class LeafletBomRadarCardEditor extends HTMLElement {
           flex: 1;
           font-weight: 500;
         }
-        .option input[type="text"],
         .option input[type="number"],
         .option select {
           flex: 2;
@@ -63,37 +63,24 @@ class LeafletBomRadarCardEditor extends HTMLElement {
           margin: 24px 0 12px 0;
           color: var(--primary-text-color);
         }
+        .info-box {
+          background: var(--secondary-background-color);
+          padding: 12px;
+          border-radius: 4px;
+          margin-bottom: 16px;
+          font-size: 13px;
+          line-height: 1.5;
+        }
       </style>
       <div class="card-config">
-        <div class="section-header">Radar Settings</div>
-        
-        <div class="option">
-          <label for="radar_id">Radar ID</label>
-          <input
-            type="text"
-            id="radar_id"
-            .value="${this._config.radar_id || 'IDR023'}"
-            @change="${this._valueChanged}"
-          />
-        </div>
-        <div class="help-text">
-          Radar ID (e.g., IDR023 for Melbourne). Leave empty to auto-select closest radar.
-        </div>
-        
-        <div class="option">
-          <label for="auto_select_radar">Auto-select closest radar</label>
-          <input
-            type="checkbox"
-            id="auto_select_radar"
-            .checked="${this._config.auto_select_radar !== false}"
-            @change="${this._valueChanged}"
-          />
+        <div class="info-box">
+          ℹ️ This card automatically loads radars based on your map view. No manual radar selection needed!
         </div>
         
         <div class="section-header">Display Settings</div>
         
         <div class="option">
-          <label for="cache_hours">Cache Hours</label>
+          <label for="cache_hours">History Duration (hours)</label>
           <input
             type="number"
             id="cache_hours"
@@ -108,7 +95,7 @@ class LeafletBomRadarCardEditor extends HTMLElement {
         </div>
         
         <div class="option">
-          <label for="default_zoom">Default Zoom Level</label>
+          <label for="default_zoom">Initial Zoom Level</label>
           <input
             type="number"
             id="default_zoom"
@@ -117,6 +104,9 @@ class LeafletBomRadarCardEditor extends HTMLElement {
             .value="${this._config.default_zoom || 8}"
             @change="${this._valueChanged}"
           />
+        </div>
+        <div class="help-text">
+          Map zoom level when card loads (5=wide, 15=close)
         </div>
         
         <div class="option">
@@ -131,100 +121,10 @@ class LeafletBomRadarCardEditor extends HTMLElement {
             @change="${this._valueChanged}"
           />
         </div>
+        <div class="help-text">
+          Transparency of radar overlay (0=invisible, 1=opaque)
+        </div>
         
         <div class="option">
           <label for="base_layer">Base Map Layer</label>
-          <select id="base_layer" @change="${this._valueChanged}">
-            <option value="osm" ${this._config.base_layer === 'osm' ? 'selected' : ''}>
-              OpenStreetMap
-            </option>
-            <option value="google" ${this._config.base_layer === 'google' ? 'selected' : ''}>
-              Google Maps
-            </option>
-          </select>
-        </div>
-        
-        <div class="section-header">Animation Settings</div>
-        
-        <div class="option">
-          <label for="playback_speed">Playback Speed (ms)</label>
-          <input
-            type="number"
-            id="playback_speed"
-            min="100"
-            max="2000"
-            step="100"
-            .value="${this._config.playback_speed || 500}"
-            @change="${this._valueChanged}"
-          />
-        </div>
-        <div class="help-text">
-          Milliseconds between frames during animation (lower = faster)
-        </div>
-        
-        <div class="section-header">Visual Options</div>
-        
-        <div class="option">
-          <label for="show_legend">Show Legend</label>
-          <input
-            type="checkbox"
-            id="show_legend"
-            .checked="${this._config.show_legend !== false}"
-            @change="${this._valueChanged}"
-          />
-        </div>
-        
-        <div class="option">
-          <label for="show_home_marker">Show Home Marker</label>
-          <input
-            type="checkbox"
-            id="show_home_marker"
-            .checked="${this._config.show_home_marker !== false}"
-            @change="${this._valueChanged}"
-          />
-        </div>
-        
-        <div class="option">
-          <label for="show_radar_marker">Show Radar Marker</label>
-          <input
-            type="checkbox"
-            id="show_radar_marker"
-            .checked="${this._config.show_radar_marker !== false}"
-            @change="${this._valueChanged}"
-          />
-        </div>
-      </div>
-    `;
-  }
-
-  _valueChanged(ev) {
-    if (!this._config || !this._hass) {
-      return;
-    }
-
-    const target = ev.target;
-    const configValue = target.id;
-    let value;
-
-    if (target.type === 'checkbox') {
-      value = target.checked;
-    } else if (target.type === 'number') {
-      value = parseFloat(target.value);
-    } else {
-      value = target.value;
-    }
-
-    if (this._config[configValue] === value) {
-      return;
-    }
-
-    const newConfig = {
-      ...this._config,
-      [configValue]: value
-    };
-
-    this.configChanged(newConfig);
-  }
-}
-
-customElements.define("leaflet-bom-radar-card-editor", LeafletBomRadarCardEditor);
+          <select id="base_layer" @change="${this._
