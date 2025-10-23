@@ -73,8 +73,8 @@ The add-on exposes these endpoints:
 - `GET /` - Dashboard and statistics
 - `GET /api/radars` - List all radars
 - `GET /api/closest-radar?lat={lat}&lon={lon}` - Find closest radar
-- `GET /api/timestamps/{radarId}` - Get available timestamps
-- `GET /api/radar/{radarId}/{timestamp}` - Get radar image
+- `GET /api/timestamps/{radarId}/{resolution}` - Get available timestamps
+- `GET /api/radar/{radarId}/{timestamp}/{resolution}` - Get radar image
 - `GET /api/cache/stats` - Cache statistics
 - `GET /health` - Health check
 
