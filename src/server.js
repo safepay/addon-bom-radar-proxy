@@ -29,10 +29,6 @@ const logger = winston.createLogger({
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Configure Express to work with Home Assistant ingress
-app.set('trust proxy', true);
-app.disable('x-powered-by');
 const CACHE_DIR = process.env.CACHE_DIR || '/data/cache';
 const FTP_HOST = 'ftp.bom.gov.au';
 const FTP_PATH = '/anon/gen/radar/';
