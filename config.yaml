@@ -3,7 +3,6 @@ version: "2.0.0"
 slug: bom_radar_proxy
 description: "Bureau of Meteorology radar image proxy with intelligent caching"
 url: "https://github.com/safepay/addon-bom-radar-proxy"
-documentation: "https://github.com/safepay/addon-bom-radar-proxy/blob/main/bom-radar-proxy/DOCS.md"
 arch:
   - armhf
   - armv7
