@@ -627,7 +627,7 @@ app.get('/api/timestamps/:radarId/:resolution', async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const force = req.query.force === 'true';
     
-    if (!radarId.match(/^IDR\d{3}$/)) {
+    if (!radarId.match(/^IDR\d{2,3}$/)) {
       return res.status(400).json({ error: 'Invalid radar ID format' });
     }
     
