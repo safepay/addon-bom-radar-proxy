@@ -44,6 +44,17 @@ const metaCache = new NodeCache({ stdTTL: TIMESTAMP_REFRESH_INTERVAL / 1000, che
 // Track last timestamp refresh time per radar
 const lastTimestampRefresh = new Map();
 
+// Resolution suffix mapping
+const RESOLUTION_SUFFIX = {
+  64: '1',
+  128: '2',
+  256: '3',
+  512: '4'  // Composite - may skip this
+};
+
+// Resolutions to support (skip 512 composite)
+const SUPPORTED_RESOLUTIONS = [64, 128, 256];
+
 // Configure Express
 app.use(helmet({
   contentSecurityPolicy: false, // Allow ingress iframe
