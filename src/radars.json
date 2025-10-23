@@ -8,7 +8,7 @@
         "coordinates": [130.925, -12.457]
       },
       "properties": {
-        "id": "IDR063",
+        "id": "IDR63",
         "name": "Darwin (Berrimah)",
         "state": "NT",
         "type": "High-resolution Doppler"
@@ -34,7 +34,7 @@
         "coordinates": [132.378, -14.521]
       },
       "properties": {
-        "id": "IDR042",
+        "id": "IDR42",
         "name": "Katherine (Tindal)",
         "state": "NT",
         "type": "High-resolution Doppler"
@@ -47,7 +47,7 @@
         "coordinates": [127.66, -18.229]
       },
       "properties": {
-        "id": "IDR039",
+        "id": "IDR39",
         "name": "Halls Creek",
         "state": "WA",
         "type": "High-resolution Doppler"
@@ -60,7 +60,7 @@
         "coordinates": [122.235, -17.951]
       },
       "properties": {
-        "id": "IDR017",
+        "id": "IDR17",
         "name": "Broome",
         "state": "WA",
         "type": "High-resolution Doppler"
@@ -73,7 +73,7 @@
         "coordinates": [118.631, -20.372]
       },
       "properties": {
-        "id": "IDR016",
+        "id": "IDR16",
         "name": "Port Hedland",
         "state": "WA",
         "type": "High-resolution Doppler"
@@ -112,7 +112,7 @@
         "coordinates": [114.614444, -28.778333]
       },
       "properties": {
-        "id": "IDR006",
+        "id": "IDR06",
         "name": "Geraldton",
         "state": "WA",
         "type": "High-resolution Doppler"
@@ -125,7 +125,7 @@
         "coordinates": [115.867, -32.393]
       },
       "properties": {
-        "id": "IDR070",
+        "id": "IDR70",
         "name": "Perth (Serpentine)",
         "state": "WA",
         "type": "High-resolution Doppler"
@@ -138,7 +138,7 @@
         "coordinates": [117.816361, -34.941806]
       },
       "properties": {
-        "id": "IDR031",
+        "id": "IDR31",
         "name": "Albany",
         "state": "WA",
         "type": "High-resolution Doppler"
@@ -151,7 +151,7 @@
         "coordinates": [121.891111, -33.859444]
       },
       "properties": {
-        "id": "IDR032",
+        "id": "IDR32",
         "name": "Esperance",
         "state": "WA",
         "type": "High-resolution Doppler"
@@ -164,7 +164,7 @@
         "coordinates": [136.818, -31.144]
       },
       "properties": {
-        "id": "IDR027",
+        "id": "IDR27",
         "name": "Woomera",
         "state": "SA",
         "type": "High-resolution Doppler"
@@ -177,7 +177,7 @@
         "coordinates": [138.469, -34.617]
       },
       "properties": {
-        "id": "IDR064",
+        "id": "IDR64",
         "name": "Adelaide (Buckland Park)",
         "state": "SA",
         "type": "High-resolution Doppler"
@@ -190,7 +190,7 @@
         "coordinates": [140.774, -37.747]
       },
       "properties": {
-        "id": "IDR014",
+        "id": "IDR14",
         "name": "Mt Gambier",
         "state": "SA",
         "type": "High-resolution Doppler"
@@ -203,7 +203,7 @@
         "coordinates": [141.598194, -34.287111]
       },
       "properties": {
-        "id": "IDR097",
+        "id": "IDR97",
         "name": "Mildura",
         "state": "VIC",
         "type": "High-resolution Doppler"
@@ -216,7 +216,7 @@
         "coordinates": [142.013306, -35.997556]
       },
       "properties": {
-        "id": "IDR095",
+        "id": "IDR95",
         "name": "Rainbow",
         "state": "VIC",
         "type": "High-resolution Doppler"
@@ -229,7 +229,7 @@
         "coordinates": [144.755417, -37.855222]
       },
       "properties": {
-        "id": "IDR022",
+        "id": "IDR02",
         "name": "Melbourne",
         "state": "VIC",
         "type": "High-resolution Doppler"
@@ -242,7 +242,7 @@
         "coordinates": [147.567, -37.885]
       },
       "properties": {
-        "id": "IDR068",
+        "id": "IDR68",
         "name": "Bairnsdale",
         "state": "VIC",
         "type": "High-resolution Doppler"
@@ -255,7 +255,7 @@
         "coordinates": [147.502, -42.832]
       },
       "properties": {
-        "id": "IDR076",
+        "id": "IDR76",
         "name": "Hobart",
         "state": "TAS",
         "type": "High-resolution Doppler"
@@ -268,7 +268,7 @@
         "coordinates": [147.457, -35.165]
       },
       "properties": {
-        "id": "IDR055",
+        "id": "IDR55",
         "name": "Wagga Wagga",
         "state": "NSW",
         "type": "High-resolution Doppler"
@@ -281,7 +281,7 @@
         "coordinates": [145.52861, -33.552194]
       },
       "properties": {
-        "id": "IDR094",
+        "id": "IDR94",
         "name": "Hillston",
         "state": "NSW",
         "type": "High-resolution Doppler"
@@ -294,7 +294,7 @@
         "coordinates": [148.708083, -32.744472]
       },
       "properties": {
-        "id": "IDR096",
+        "id": "IDR96",
         "name": "Yeoval",
         "state": "NSW",
         "type": "High-resolution Doppler"
@@ -307,7 +307,7 @@
         "coordinates": [151.209417, -33.70083]
       },
       "properties": {
-        "id": "IDR071",
+        "id": "IDR71",
         "name": "Sydney (Terrey Hills)",
         "state": "NSW",
         "type": "High-resolution Doppler"
@@ -320,7 +320,7 @@
         "coordinates": [151.385, -32.852]
       },
       "properties": {
-        "id": "IDR004",
+        "id": "IDR04",
         "name": "Newcastle",
         "state": "NSW",
         "type": "High-resolution Doppler"
@@ -333,7 +333,7 @@
         "coordinates": [152.982, -29.623]
       },
       "properties": {
-        "id": "IDR028",
+        "id": "IDR28",
         "name": "Grafton",
         "state": "NSW",
         "type": "High-resolution Doppler"
@@ -346,7 +346,7 @@
         "coordinates": [153.116389, -27.501667]
       },
       "properties": {
-        "id": "IDR066",
+        "id": "IDR66",
         "name": "Brisbane (Mt Stapylton)",
         "state": "QLD",
         "type": "High-resolution Doppler"
@@ -359,7 +359,7 @@
         "coordinates": [152.595556, -27.658056]
       },
       "properties": {
-        "id": "IDR050",
+        "id": "IDR50",
         "name": "Marburg",
         "state": "QLD",
         "type": "High-resolution Doppler"
@@ -385,7 +385,7 @@
         "coordinates": [152.667, -26.183]
       },
       "properties": {
-        "id": "IDR008",
+        "id": "IDR08",
         "name": "Gympie",
         "state": "QLD",
         "type": "High-resolution Doppler"
@@ -398,7 +398,7 @@
         "coordinates": [151.263, -23.847]
       },
       "properties": {
-        "id": "IDR023",
+        "id": "IDR23",
         "name": "Gladstone",
         "state": "QLD",
         "type": "High-resolution Doppler"
@@ -411,7 +411,7 @@
         "coordinates": [148.164, -23.534]
       },
       "properties": {
-        "id": "IDR072",
+        "id": "IDR72",
         "name": "Emerald",
         "state": "QLD",
         "type": "High-resolution Doppler"
@@ -450,7 +450,7 @@
         "coordinates": [145.018056, -19.252222]
       },
       "properties": {
-        "id": "IDR074",
+        "id": "IDR74",
         "name": "Greenvale",
         "state": "QLD",
         "type": "High-resolution Doppler"
@@ -463,7 +463,7 @@
         "coordinates": [145.755, -16.885]
       },
       "properties": {
-        "id": "IDR019",
+        "id": "IDR19",
         "name": "Cairns",
         "state": "QLD",
         "type": "High-resolution Doppler"
@@ -476,7 +476,7 @@
         "coordinates": [149.972, -16.289]
       },
       "properties": {
-        "id": "IDR041",
+        "id": "IDR41",
         "name": "Willis Island",
         "state": "QLD",
         "type": "High-resolution Doppler"
@@ -489,7 +489,7 @@
         "coordinates": [149.191, -35.3075]
       },
       "properties": {
-        "id": "IDR040",
+        "id": "IDR04",
         "name": "Canberra",
         "state": "ACT",
         "type": "Standard Weather Watch"
