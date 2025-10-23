@@ -28,8 +28,11 @@ const logger = winston.createLogger({
 });
 
 const app = express();
-// Home Assistant sets HASSIO_INGRESS_PORT for ingress
-const PORT = process.env.HASSIO_INGRESS_PORT || process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
+
+// Configure Express to work with Home Assistant ingress
+app.set('trust proxy', true);
+app.disable('x-powered-by');
 const CACHE_DIR = process.env.CACHE_DIR || '/data/cache';
 const FTP_HOST = 'ftp.bom.gov.au';
 const FTP_PATH = '/anon/gen/radar/';
@@ -987,7 +990,9 @@ setInterval(checkCacheSize, 600000);
 
 // Start server
 app.listen(PORT, '0.0.0.0', async () => {
-  logger.info(`BoM Radar Proxy Add-on started`);
+  logger.info(`BoM Radar Proxy Add-on started on 0.0.0.0:${PORT}`);
+  logger.info(`Server accessible via Home Assistant ingress`);
+  logger.info(`Direct access (if applicable): http://0.0.0.0:${PORT}`);
   logger.info(`Port: ${PORT}`);
   logger.info(`Cache directory: ${CACHE_DIR}`);
   logger.info(`FTP source: ${FTP_HOST}${FTP_PATH}`);
