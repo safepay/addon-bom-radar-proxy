@@ -986,7 +986,7 @@ setInterval(cleanupCache, 3600000);
 setInterval(checkCacheSize, 600000);
 
 // Start server
-app.listen(PORT, async () => {
+app.listen(PORT, '0.0.0.0', async () => {
   logger.info(`BoM Radar Proxy Add-on started`);
   logger.info(`Port: ${PORT}`);
   logger.info(`Cache directory: ${CACHE_DIR}`);
