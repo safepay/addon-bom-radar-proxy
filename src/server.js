@@ -71,6 +71,15 @@ app.use(express.json());
 app.set('trust proxy', true);
 app.disable('x-powered-by');
 
+app.use((req, res, next) => {
+  // Home Assistant ingress sometimes sends paths as "//"
+  // Normalize these to "/"
+  if (req.url === '//' || req.path === '//') {
+    req.url = '/';
+  }
+  next();
+});
+
 // Catch-all request logger for debugging
 app.use((req, res, next) => {
   logger.info('=== REQUEST RECEIVED ===', {
