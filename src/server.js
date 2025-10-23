@@ -56,6 +56,7 @@ const RESOLUTION_SUFFIX = {
 const SUPPORTED_RESOLUTIONS = [64, 128, 256];
 
 // Configure Express
+// Configure Express
 app.use(helmet({
   contentSecurityPolicy: false, // Allow ingress iframe
 }));
@@ -66,10 +67,11 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Configure Express to work with Home Assistant ingress
+// Configure Express to work with Home Assistant ingress (ONLY HERE)
 app.set('trust proxy', true);
 app.disable('x-powered-by');
 
+// Catch-all request logger for debugging
 app.use((req, res, next) => {
   logger.info('=== REQUEST RECEIVED ===', {
     method: req.method,
@@ -94,6 +96,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Request logging middleware
 app.use((req, res, next) => {
   const startTime = Date.now();
   
