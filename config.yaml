@@ -1,5 +1,5 @@
 name: "BoM Radar Proxy"
-version: "2.0.0"
+version: "2.0.1"
 slug: bom_radar_proxy
 description: "Bureau of Meteorology radar image proxy with intelligent caching"
 url: "https://github.com/safepay/addon-bom-radar-proxy"
