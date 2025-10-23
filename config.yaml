@@ -1,5 +1,5 @@
 name: "BoM Radar Proxy"
-version: "2.0.6"
+version: "2.0.7"
 slug: bom_radar_proxy
 description: "Bureau of Meteorology radar image proxy with intelligent caching"
 url: "https://github.com/safepay/addon-bom-radar-proxy"
@@ -10,17 +10,20 @@ arch:
   - amd64
   - i386
 init: false
-ports:
-  3000/tcp: 3000
-ports_description:
-  3000/tcp: "Internal API port (not exposed)"
 ingress: true
 ingress_port: 3000
 ingress_entry: "/"
+webui: "http://[HOST]:[PORT:3000]"
 panel_icon: mdi:radar
 panel_title: "BoM Radar Proxy"
 hassio_api: true
-host_network: false
+hassio_role: default
+auth_api: false
+homeassistant_api: false
+ports:
+  3000/tcp: 3000
+ports_description:
+  3000/tcp: "API port for cards and integrations"
 options:
   log_level: "info"
   cache_ttl_hours: 24
