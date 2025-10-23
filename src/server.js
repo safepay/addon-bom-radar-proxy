@@ -56,15 +56,33 @@ const RESOLUTION_SUFFIX = {
 const SUPPORTED_RESOLUTIONS = [64, 128, 256];
 
 // Configure Express
-// Configure Express
 app.use(helmet({
   contentSecurityPolicy: false, // Allow ingress iframe
 }));
 app.use(compression());
+
+// Enhanced CORS for card access
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    // Allow all origins that include 'homeassistant' or 'localhost'
+    if (origin.includes('homeassistant') || 
+        origin.includes('localhost') || 
+        origin.includes('127.0.0.1') ||
+        origin.includes('192.168.')) {
+      return callback(null, true);
+    }
+    
+    // Allow the origin
+    callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Accept', 'Authorization']
 }));
+
 app.use(express.json());
 
 // Configure Express to work with Home Assistant ingress (ONLY HERE)
