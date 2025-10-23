@@ -70,7 +70,34 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Request logging middleware
+// Configure Express to work with Home Assistant ingress
+app.set('trust proxy', true);
+app.disable('x-powered-by');
+
+app.use((req, res, next) => {
+  logger.info('=== REQUEST RECEIVED ===', {
+    method: req.method,
+    url: req.url,
+    originalUrl: req.originalUrl,
+    path: req.path,
+    baseUrl: req.baseUrl,
+    ip: req.ip,
+    ips: req.ips,
+    protocol: req.protocol,
+    secure: req.secure,
+    hostname: req.hostname,
+    headers: {
+      host: req.get('host'),
+      'x-forwarded-for': req.get('x-forwarded-for'),
+      'x-forwarded-proto': req.get('x-forwarded-proto'),
+      'x-forwarded-host': req.get('x-forwarded-host'),
+      'x-ingress-path': req.get('x-ingress-path'),
+      'user-agent': req.get('user-agent')
+    }
+  });
+  next();
+});
+
 app.use((req, res, next) => {
   const startTime = Date.now();
   
@@ -104,6 +131,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Then continue with your routes...
 
 // Ensure cache directory exists
 (async () => {
