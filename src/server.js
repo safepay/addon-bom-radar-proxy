@@ -28,7 +28,8 @@ const logger = winston.createLogger({
 });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Home Assistant sets HASSIO_INGRESS_PORT for ingress
+const PORT = process.env.HASSIO_INGRESS_PORT || process.env.PORT || 3000;
 const CACHE_DIR = process.env.CACHE_DIR || '/data/cache';
 const FTP_HOST = 'ftp.bom.gov.au';
 const FTP_PATH = '/anon/gen/radar/';
