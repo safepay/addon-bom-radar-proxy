@@ -66,6 +66,41 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Request logging middleware
+app.use((req, res, next) => {
+  const startTime = Date.now();
+  
+  // Log request
+  logger.debug('Incoming request', {
+    method: req.method,
+    path: req.path,
+    query: req.query,
+    ip: req.ip,
+    userAgent: req.get('user-agent')
+  });
+  
+  // Log response when finished
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+    const logData = {
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      duration: `${duration}ms`,
+      ip: req.ip
+    };
+    
+    if (res.statusCode >= 400) {
+      logger.warn('Request completed with error', logData);
+    } else {
+      logger.debug('Request completed', logData);
+    }
+  });
+  
+  next();
+});
+
+
 // Ensure cache directory exists
 (async () => {
   try {
@@ -212,6 +247,13 @@ async function downloadFromFTP(radarId, timestamp, resolution) {
  * Uses timestamp from filename and resolution to determine cache freshness
  */
 async function getRadarImage(radarId, timestamp, resolution) {
+  logger.debug('getRadarImage called', { 
+    radarId, 
+    timestamp, 
+    resolution,
+    supportedResolutions: SUPPORTED_RESOLUTIONS 
+  });
+   
   // Validate resolution
   if (!SUPPORTED_RESOLUTIONS.includes(resolution)) {
     throw new Error(`Unsupported resolution: ${resolution}. Supported: ${SUPPORTED_RESOLUTIONS.join(', ')}`);
@@ -943,7 +985,7 @@ setInterval(cleanupCache, 3600000);
 setInterval(checkCacheSize, 600000);
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   logger.info(`BoM Radar Proxy Add-on started`);
   logger.info(`Port: ${PORT}`);
   logger.info(`Cache directory: ${CACHE_DIR}`);
@@ -952,8 +994,27 @@ app.listen(PORT, () => {
   logger.info(`Current image refresh interval: ${CURRENT_IMAGE_REFRESH_INTERVAL / 1000}s`);
   logger.info(`Cache TTL: ${DISK_CACHE_TTL / 3600}h`);
   logger.info(`Max cache size: ${MAX_CACHE_SIZE_MB}MB`);
+  
+  // Add diagnostics
+  try {
+    const cacheStats = await fs.stat(CACHE_DIR);
+    logger.debug('Cache directory stats', { 
+      exists: true,
+      isDirectory: cacheStats.isDirectory() 
+    });
+  } catch (error) {
+    logger.error('Cache directory issue', { error: error.message });
+  }
+  
+  // Test FTP connection
+  try {
+    const testClient = await connectFTP();
+    testClient.end();
+    logger.info('FTP connection test: SUCCESS');
+  } catch (error) {
+    logger.error('FTP connection test: FAILED', { error: error.message });
+  }
 });
-
 // Graceful shutdown
 process.on('SIGTERM', () => {
   logger.info('SIGTERM received, shutting down gracefully');
