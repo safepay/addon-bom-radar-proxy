@@ -124,6 +124,22 @@ function getTimeUntilNextRefresh(radarId) {
 }
 
 /**
+ * Build radar URL with resolution suffix
+ */
+function buildRadarUrl(radarId, timestamp, resolution) {
+  const suffix = RESOLUTION_SUFFIX[resolution];
+  if (!suffix) {
+    throw new Error(`Invalid resolution: ${resolution}`);
+  }
+  
+  // Format: IDRxxxS.T.yyyyMMddHHmm.png where S is the resolution suffix
+  const filename = `${radarId}${suffix}.T.${timestamp}.png`;
+  const remotePath = path.join(FTP_PATH, filename);
+  
+  return { filename, remotePath };
+}
+
+/**
  * Connect to BoM FTP server
  */
 function connectFTP() {
@@ -157,13 +173,11 @@ function connectFTP() {
 /**
  * Download file from FTP
  */
-async function downloadFromFTP(radarId, timestamp) {
+async function downloadFromFTP(radarId, timestamp, resolution) {
   const client = await connectFTP();
+  const { remotePath } = buildRadarUrl(radarId, timestamp, resolution);
   
   return new Promise((resolve, reject) => {
-    const filename = `${radarId}.T.${timestamp}.png`;
-    const remotePath = path.join(FTP_PATH, filename);
-    
     logger.info(`Downloading: ${remotePath}`);
     
     const chunks = [];
@@ -195,10 +209,15 @@ async function downloadFromFTP(radarId, timestamp) {
 
 /**
  * Get cached image or download from FTP
- * Uses timestamp from filename to determine if image should be refreshed
+ * Uses timestamp from filename and resolution to determine cache freshness
  */
-async function getRadarImage(radarId, timestamp) {
-  const cacheKey = `${radarId}_${timestamp}`;
+async function getRadarImage(radarId, timestamp, resolution) {
+  // Validate resolution
+  if (!SUPPORTED_RESOLUTIONS.includes(resolution)) {
+    throw new Error(`Unsupported resolution: ${resolution}. Supported: ${SUPPORTED_RESOLUTIONS.join(', ')}`);
+  }
+  
+  const cacheKey = `${radarId}_${timestamp}_${resolution}`;
   const cachePath = path.join(CACHE_DIR, `${cacheKey}.png`);
   
   // Parse the timestamp to get the actual image time
@@ -224,7 +243,8 @@ async function getRadarImage(radarId, timestamp) {
           buffer: await fs.readFile(cachePath),
           fromCache: true,
           cacheAge: Math.floor(fileCacheAge),
-          imageAge: Math.floor(imageAge)
+          imageAge: Math.floor(imageAge),
+          resolution: resolution
         };
       } else {
         logger.info(`Current image timestamp past 10min threshold: ${cacheKey} (timestamp is ${Math.floor(imageAge)}s old)`);
@@ -239,7 +259,7 @@ async function getRadarImage(radarId, timestamp) {
   // Download from FTP immediately
   try {
     logger.info(`Downloading radar image: ${cacheKey} (timestamp is ${Math.floor(imageAge)}s old)`);
-    const buffer = await downloadFromFTP(radarId, timestamp);
+    const buffer = await downloadFromFTP(radarId, timestamp, resolution);
     
     // Save to cache
     await fs.writeFile(cachePath, buffer);
@@ -252,7 +272,8 @@ async function getRadarImage(radarId, timestamp) {
       buffer: buffer,
       fromCache: false,
       cacheAge: 0,
-      imageAge: Math.floor(imageAge)
+      imageAge: Math.floor(imageAge),
+      resolution: resolution
     };
   } catch (error) {
     logger.error(`Failed to download ${cacheKey}:`, error.message);
@@ -263,13 +284,21 @@ async function getRadarImage(radarId, timestamp) {
 /**
  * List available timestamps for a radar
  */
-async function listAvailableTimestamps(radarId, maxResults = 20, force = false) {
-  const cacheKey = `timestamps_${radarId}`;
+/**
+ * List available timestamps for a radar at a specific resolution
+ */
+async function listAvailableTimestamps(radarId, resolution, maxResults = 20, force = false) {
+  const suffix = RESOLUTION_SUFFIX[resolution];
+  if (!suffix) {
+    throw new Error(`Invalid resolution: ${resolution}`);
+  }
+  
+  const cacheKey = `timestamps_${radarId}_${resolution}`;
   const cached = metaCache.get(cacheKey);
   
   if (cached && !force) {
     const nextRefresh = getTimeUntilNextRefresh(radarId);
-    logger.info(`Timestamp cache hit: ${radarId} (next refresh in ${nextRefresh}s)`);
+    logger.info(`Timestamp cache hit: ${radarId} ${resolution}km (next refresh in ${nextRefresh}s)`);
     return {
       timestamps: cached,
       fromCache: true,
@@ -304,7 +333,8 @@ async function listAvailableTimestamps(radarId, maxResults = 20, force = false) 
         return;
       }
       
-      const pattern = new RegExp(`^${radarId}\\.T\\.(\\d{12})\\.png$`);
+      // Filter files matching the radar ID pattern with resolution suffix
+      const pattern = new RegExp(`^${radarId}${suffix}\\.T\\.(\\d{12})\\.png$`);
       const timestamps = list
         .filter(item => item.type === '-' && pattern.test(item.name))
         .map(item => {
@@ -319,7 +349,7 @@ async function listAvailableTimestamps(radarId, maxResults = 20, force = false) 
       metaCache.set(cacheKey, timestamps);
       updateTimestampRefreshTime(radarId);
       
-      logger.info(`Retrieved ${timestamps.length} timestamps for ${radarId}`);
+      logger.info(`Retrieved ${timestamps.length} timestamps for ${radarId} ${resolution}km`);
       
       resolve({
         timestamps: timestamps,
@@ -446,21 +476,28 @@ async function cleanupCache() {
 // API Routes
 
 /**
- * GET /api/radar/:radarId/:timestamp
+ * GET /api/radar/:radarId/:timestamp/:resolution
  */
-app.get('/api/radar/:radarId/:timestamp', async (req, res) => {
+app.get('/api/radar/:radarId/:timestamp/:resolution', async (req, res) => {
   try {
-    const { radarId, timestamp } = req.params;
+    const { radarId, timestamp, resolution } = req.params;
     
-    if (!radarId.match(/^IDR\d{2,4}$/)) {
-      return res.status(400).json({ error: 'Invalid radar ID' });
+    if (!radarId.match(/^IDR\d{3}$/)) {
+      return res.status(400).json({ error: 'Invalid radar ID format' });
     }
     
     if (!timestamp.match(/^\d{12}$/)) {
       return res.status(400).json({ error: 'Invalid timestamp format (expected: yyyyMMddHHmm)' });
     }
     
-    const result = await getRadarImage(radarId, timestamp);
+    const resNum = parseInt(resolution);
+    if (!SUPPORTED_RESOLUTIONS.includes(resNum)) {
+      return res.status(400).json({ 
+        error: `Invalid resolution. Supported: ${SUPPORTED_RESOLUTIONS.join(', ')}km` 
+      });
+    }
+    
+    const result = await getRadarImage(radarId, timestamp, resNum);
     
     res.set({
       'Content-Type': 'image/png',
@@ -468,7 +505,8 @@ app.get('/api/radar/:radarId/:timestamp', async (req, res) => {
       'X-From-Cache': result.fromCache.toString(),
       'X-Cache-Age': result.cacheAge.toString(),
       'X-Image-Age': result.imageAge.toString(),
-      'ETag': `${radarId}-${timestamp}`
+      'X-Resolution': result.resolution.toString(),
+      'ETag': `${radarId}-${timestamp}-${resolution}`
     });
     
     res.send(result.buffer);
@@ -479,6 +517,56 @@ app.get('/api/radar/:radarId/:timestamp', async (req, res) => {
       res.status(404).json({ error: 'Radar image not found on BoM server' });
     } else {
       res.status(500).json({ error: 'Failed to retrieve radar image', details: error.message });
+    }
+  }
+});
+
+/**
+ * GET /api/timestamps/:radarId/:resolution
+ */
+app.get('/api/timestamps/:radarId/:resolution', async (req, res) => {
+  try {
+    const { radarId, resolution } = req.params;
+    const limit = parseInt(req.query.limit) || 20;
+    const force = req.query.force === 'true';
+    
+    if (!radarId.match(/^IDR\d{3}$/)) {
+      return res.status(400).json({ error: 'Invalid radar ID format' });
+    }
+    
+    const resNum = parseInt(resolution);
+    if (!SUPPORTED_RESOLUTIONS.includes(resNum)) {
+      return res.status(400).json({ 
+        error: `Invalid resolution. Supported: ${SUPPORTED_RESOLUTIONS.join(', ')}km` 
+      });
+    }
+    
+    const result = await listAvailableTimestamps(radarId, resNum, limit, force);
+    
+    res.set({
+      'Cache-Control': 'public, max-age=600',
+      'X-From-Cache': result.fromCache.toString()
+    });
+    
+    res.json({
+      radarId,
+      resolution: resNum,
+      timestamps: result.timestamps,
+      count: result.timestamps.length,
+      fromCache: result.fromCache,
+      nextRefreshIn: result.nextRefreshIn,
+      rateLimited: result.rateLimited || false
+    });
+  } catch (error) {
+    logger.error('Error listing timestamps:', error);
+    
+    if (error.message.includes('Rate limit')) {
+      res.status(429).json({ 
+        error: error.message,
+        retryAfter: getTimeUntilNextRefresh(req.params.radarId)
+      });
+    } else {
+      res.status(500).json({ error: 'Failed to list timestamps', details: error.message });
     }
   }
 });
@@ -787,11 +875,11 @@ app.get('/', async (req, res) => {
               </li>
               <li class="api-item">
                 <span class="method">GET</span>
-                <span class="endpoint">/api/timestamps/{radarId}</span>
+                <span class="endpoint">/api/timestamps/{radarId}/{resolution}</span>
               </li>
               <li class="api-item">
                 <span class="method">GET</span>
-                <span class="endpoint">/api/radar/{radarId}/{timestamp}</span>
+                <span class="endpoint">/api/radar/{radarId}/{timestamp}/{resolution}</span>
               </li>
               <li class="api-item">
                 <span class="method">GET</span>
