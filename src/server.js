@@ -582,7 +582,7 @@ app.get('/api/radar/:radarId/:timestamp/:resolution', async (req, res) => {
   try {
     const { radarId, timestamp, resolution } = req.params;
     
-    if (!radarId.match(/^IDR\d{3}$/)) {
+    if (!radarId.match(/^IDR\d{2,3}$/)) {
       return res.status(400).json({ error: 'Invalid radar ID format' });
     }
     
