@@ -7,5 +7,5 @@ build_from:
 labels:
   org.opencontainers.image.title: "BoM Radar Proxy"
   org.opencontainers.image.description: "Bureau of Meteorology radar image proxy with caching"
-  org.opencontainers.image.source: "https://github.com/safepay/leaflet-bom-radar"
+  org.opencontainers.image.source: "https://github.com/safepay/addon-bom-radar-proxy"
   org.opencontainers.image.licenses: "MIT"
