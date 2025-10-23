@@ -54,9 +54,9 @@ LABEL \
     org.opencontainers.image.vendor="safepay" \
     org.opencontainers.image.authors="safepay" \
     org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.url="https://github.com/safepay/leaflet-bom-radar" \
-    org.opencontainers.image.source="https://github.com/safepay/leaflet-bom-radar" \
-    org.opencontainers.image.documentation="https://github.com/safepay/leaflet-bom-radar/blob/main/README.md" \
+    org.opencontainers.image.url="https://github.com/safepay/addon-bom-radar-proxy" \
+    org.opencontainers.image.source="https://github.com/safepay/addon-bom-radar-proxy" \
+    org.opencontainers.image.documentation="https://github.com/safepay/addon-bom-radar-proxy/blob/main/README.md" \
     org.opencontainers.image.created=${BUILD_DATE} \
     org.opencontainers.image.revision=${BUILD_REF} \
     org.opencontainers.image.version=${BUILD_VERSION}
