@@ -487,7 +487,7 @@ app.get('/api/radar/:radarId/:timestamp/:resolution', async (req, res) => {
     }
     
     if (!timestamp.match(/^\d{12}$/)) {
-      return res.status(400).json({ error: 'Invalid timestamp format (expected: yyyyMMddHHmm)' });
+      return res.status(400).json({ error: 'Invalid timestamp format' });
     }
     
     const resNum = parseInt(resolution);
@@ -514,16 +514,13 @@ app.get('/api/radar/:radarId/:timestamp/:resolution', async (req, res) => {
     logger.error('Error serving radar image:', error);
     
     if (error.code === 550) {
-      res.status(404).json({ error: 'Radar image not found on BoM server' });
+      res.status(404).json({ error: 'Radar image not found' });
     } else {
       res.status(500).json({ error: 'Failed to retrieve radar image', details: error.message });
     }
   }
 });
 
-/**
- * GET /api/timestamps/:radarId/:resolution
- */
 app.get('/api/timestamps/:radarId/:resolution', async (req, res) => {
   try {
     const { radarId, resolution } = req.params;
@@ -551,48 +548,6 @@ app.get('/api/timestamps/:radarId/:resolution', async (req, res) => {
     res.json({
       radarId,
       resolution: resNum,
-      timestamps: result.timestamps,
-      count: result.timestamps.length,
-      fromCache: result.fromCache,
-      nextRefreshIn: result.nextRefreshIn,
-      rateLimited: result.rateLimited || false
-    });
-  } catch (error) {
-    logger.error('Error listing timestamps:', error);
-    
-    if (error.message.includes('Rate limit')) {
-      res.status(429).json({ 
-        error: error.message,
-        retryAfter: getTimeUntilNextRefresh(req.params.radarId)
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to list timestamps', details: error.message });
-    }
-  }
-});
-
-/**
- * GET /api/timestamps/:radarId
- */
-app.get('/api/timestamps/:radarId', async (req, res) => {
-  try {
-    const { radarId } = req.params;
-    const limit = parseInt(req.query.limit) || 20;
-    const force = req.query.force === 'true';
-    
-    if (!radarId.match(/^IDR\d{2,4}$/)) {
-      return res.status(400).json({ error: 'Invalid radar ID' });
-    }
-    
-    const result = await listAvailableTimestamps(radarId, limit, force);
-    
-    res.set({
-      'Cache-Control': 'public, max-age=600',
-      'X-From-Cache': result.fromCache.toString()
-    });
-    
-    res.json({
-      radarId,
       timestamps: result.timestamps,
       count: result.timestamps.length,
       fromCache: result.fromCache,
