@@ -727,22 +727,12 @@ app.get('/api/closest-radar', async (req, res) => {
  * GET / 
  * Root endpoint - Simple dashboard
  */
-app.get('/', async (req, res) => {
-  try {
-    const files = await fs.readdir(CACHE_DIR);
-    let totalSize = 0;
-    let imageCount = 0;
-    
-    for (const file of files) {
-      if (file.endsWith('.png')) {
-        const stats = await fs.stat(path.join(CACHE_DIR, file));
-        totalSize += stats.size;
-        imageCount++;
-      }
-    }
-    
     const totalSizeMB = Math.round(totalSize / 1024 / 1024 * 100) / 100;
     const utilization = Math.round((totalSizeMB / MAX_CACHE_SIZE_MB) * 100);
+    const uptimeHours = Math.floor(process.uptime() / 3600);
+    const timestampRefreshSec = TIMESTAMP_REFRESH_INTERVAL / 1000;
+    const imageRefreshSec = CURRENT_IMAGE_REFRESH_INTERVAL / 1000;
+    const cacheTTLHrs = DISK_CACHE_TTL / 3600;
     
     res.send(`
       <!DOCTYPE html>
@@ -907,7 +897,7 @@ app.get('/', async (req, res) => {
               </div>
               <div class="stat">
                 <div class="stat-label">Uptime</div>
-                <div class="stat-value">${Math.floor(process.uptime() / 3600)}<span class="stat-unit">hrs</span></div>
+                <div class="stat-value">${uptimeHours}<span class="stat-unit">hrs</span></div>
               </div>
             </div>
             
@@ -915,8 +905,7 @@ app.get('/', async (req, res) => {
             <div class="progress-bar">
               <div class="progress-fill" style="width: ${utilization}%">${utilization}%</div>
             </div>
-          </div>
-          
+          </div>          
           <div class="card">
             <h2 style="margin-bottom: 16px; font-size: 20px;">API Endpoints</h2>
             <ul class="api-list">
@@ -952,15 +941,15 @@ app.get('/', async (req, res) => {
             <div class="stats-grid">
               <div class="stat">
                 <div class="stat-label">Timestamp Refresh</div>
-                <div class="stat-value">${TIMESTAMP_REFRESH_INTERVAL / 1000}<span class="stat-unit">sec</span></div>
+                <div class="stat-value">${timestampRefreshSec}<span class="stat-unit">sec</span></div>
               </div>
               <div class="stat">
                 <div class="stat-label">Image Refresh</div>
-                <div class="stat-value">${CURRENT_IMAGE_REFRESH_INTERVAL / 1000}<span class="stat-unit">sec</span></div>
+                <div class="stat-value">${imageRefreshSec}<span class="stat-unit">sec</span></div>
               </div>
               <div class="stat">
                 <div class="stat-label">Cache TTL</div>
-                <div class="stat-value">${DISK_CACHE_TTL / 3600}<span class="stat-unit">hrs</span></div>
+                <div class="stat-value">${cacheTTLHrs}<span class="stat-unit">hrs</span></div>
               </div>
               <div class="stat">
                 <div class="stat-label">FTP Source</div>
