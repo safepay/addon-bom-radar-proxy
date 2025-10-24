@@ -727,6 +727,20 @@ app.get('/api/closest-radar', async (req, res) => {
  * GET / 
  * Root endpoint - Simple dashboard
  */
+app.get('/', async (req, res) => {
+  try {
+    const files = await fs.readdir(CACHE_DIR);
+    let totalSize = 0;
+    let imageCount = 0;
+    
+    for (const file of files) {
+      if (file.endsWith('.png')) {
+        const stats = await fs.stat(path.join(CACHE_DIR, file));
+        totalSize += stats.size;
+        imageCount++;
+      }
+    }
+    
     const totalSizeMB = Math.round(totalSize / 1024 / 1024 * 100) / 100;
     const utilization = Math.round((totalSizeMB / MAX_CACHE_SIZE_MB) * 100);
     const uptimeHours = Math.floor(process.uptime() / 3600);
