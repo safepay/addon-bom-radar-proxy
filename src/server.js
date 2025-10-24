@@ -422,9 +422,21 @@ async function listAvailableTimestamps(radarId, resolution, maxResults = 20, for
     throw new Error(`Rate limit: Please wait ${waitTime} seconds before refreshing timestamps for ${radarId}`);
   }
   
-  const client = await connectFTP();
-  
+  // ADD TIMEOUT TO FTP CONNECTION
+  const client = await Promise.race([
+    connectFTP(),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('FTP connection timeout')), 10000)
+    )
+  ]);
+    
   return new Promise((resolve, reject) => {
+    // ADD TIMEOUT TO LIST OPERATION
+    const listTimeout = setTimeout(() => {
+      client.end();
+      reject(new Error(`Timeout listing files for ${radarId}`));
+    }, 15000); // 15 second timeout
+    
     client.list(FTP_PATH, (err, list) => {
       client.end();
       
