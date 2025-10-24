@@ -667,15 +667,28 @@ app.get('/api/timestamps/:radarId/:resolution', async (req, res) => {
       rateLimited: result.rateLimited || false
     });
   } catch (error) {
-    logger.error('Error listing timestamps:', error);
+    logger.error(`Error listing timestamps for ${req.params.radarId}:`, error.message);
     
     if (error.message.includes('Rate limit')) {
       res.status(429).json({ 
         error: error.message,
         retryAfter: getTimeUntilNextRefresh(req.params.radarId)
       });
+    } else if (error.message.includes('timeout')) {
+      // Return empty array on timeout instead of failing
+      res.json({
+        radarId: req.params.radarId,
+        resolution: parseInt(req.params.resolution),
+        timestamps: [],
+        count: 0,
+        fromCache: false,
+        error: 'Timeout fetching timestamps'
+      });
     } else {
-      res.status(500).json({ error: 'Failed to list timestamps', details: error.message });
+      res.status(500).json({ 
+        error: 'Failed to list timestamps', 
+        details: error.message 
+      });
     }
   }
 });
